@@ -38,7 +38,7 @@ function Header() {
   ]
 
   return (
-    <header className='py-4 bg-gray-900/50 backdrop-blur-md border-b border-gray-700'>
+   <header className='py-4 bg-gray-900/50 backdrop-blur-md border-b border-gray-700 z-50 relative'>
       <Container>
         <nav className='flex items-center justify-between'>
           <div className='flex items-center'>
@@ -84,7 +84,7 @@ function Header() {
 
           {/* Mobile Navigation */}
           {isMenuOpen && (
-            <div className='md:hidden absolute top-16 left-0 right-0 bg-gray-900/95 backdrop-blur-md border-b border-gray-700'>
+            <div className='md:hidden z-50 absolute top-16 left-0 right-0 bg-gray-900/95 backdrop-blur-md border-b border-gray-700'>
               <ul className='flex flex-col p-4 space-y-2'>
                 {navItems.map((item) => 
                   item.active ? (
