@@ -4,7 +4,7 @@ import {Link} from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Heart, MessageCircle, ArrowRight } from 'lucide-react'
 
-function PostCard({$id, title, featuredimage}) {
+function PostCard({$id, title, featuredimage,$createdAt}) {
     const [isLiked, setIsLiked] = useState(false)
     const [likes, setLikes] = useState(0)
     const [comments, setComments] = useState(0)
@@ -31,6 +31,7 @@ function PostCard({$id, title, featuredimage}) {
                     <div className='absolute bottom-0 left-0 right-0 p-6'>
                         <h2 className='text-xl font-bold text-white line-clamp-2'>{title}</h2>
                     </div>
+                    <p> <i><span className=' text-white//text-slate-400'> Created At - {$createdAt}</span></i></p>
                 </div>
                 
                 <div className='p-4 flex items-center justify-between border-t border-gray-700'>
