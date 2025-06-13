@@ -31,7 +31,7 @@ function App() {
   }
 
   return (
-    <div className='min-h-screen flex flex-col bg-gradient-to-b from-gray-900 to-gray-800 text-white'>
+    <div className='min-h-screen min-w-screen flex flex-col bg-gradient-to-b from-gray-900 to-gray-800 text-white'>
       <div className='w-full'>
         <Header />
         <main className='container mx-auto px-4 py-8'>
