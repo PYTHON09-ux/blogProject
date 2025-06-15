@@ -19,9 +19,9 @@ export default function Post() {
 
     const userData = useSelector((state) => state.auth.userData);
     const isAuthor = post && userData ? post.useid === userData.$id : false;
-
+    
     useEffect(() => {
-        if (slug) {
+         if (!slug || !userData) return;
 
             appwriteService.getPost(slug).then((post) => {
 
@@ -34,13 +34,14 @@ export default function Post() {
                         { id: 2, text: "Very informative!", author: "Jane Smith", date: "2024-03-19" },
                     ]);
 
+                    console.log(userData)
                     if(post.likedBy.includes(userData.$id)){
                         setIsLiked(true);
                     }
                 } else navigate("/");
             });
-        } else navigate("/");
-    }, [slug, navigate]);
+        
+    }, [slug, navigate,userData]);
 
 
 

@@ -1,31 +1,43 @@
 import React, { useEffect, useState } from 'react'
 import appwriteService from "../appwrite/config"
-import {Link} from 'react-router-dom'
+import authService from '../appwrite/auth'
+import { Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Heart, MessageCircle, ArrowRight } from 'lucide-react'
 
 
-function PostCard({$id, title, featuredimage,$createdAt, likes, likedBy}) {
+function PostCard({ $id, title, featuredimage, $createdAt, likes, likedBy }) {
     const [isLiked, setIsLiked] = useState(false)
-    const [isAlreadyLiked, setisAlreadyLiked]= useState();
+    const [isAlreadyLiked, setisAlreadyLiked] = useState();
     const [comments, setComments] = useState(0)
     const authStatus = useSelector((state) => state.auth.status)
     const userData = useSelector((state) => state.auth.userData);
 
 
-    useEffect(()=>{
+    useEffect(() => {
+        const flag = async () => {
+            try {
+                const userData = await authService.getCurrentUser();
+                console.log(userData); 
 
-                    if(likedBy.includes(userData.$id)){
-                        setIsLiked(true);
-                    }
-    },[])
+                if (likedBy.includes(userData.$id)) {
+                    setIsLiked(true);
+                }
+            } catch (error) {
+                console.error("Failed to fetch user:", error);
+            }
+        };
+
+        flag(); 
+    }, [likedBy]);
+
 
     return (
         <Link to={`/post/${$id}`}>
             <div className='w-full bg-gray-800  rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition duration-300 transform hover:-translate-y-1'>
                 <div className='relative'>
-                    <img 
-                        src={appwriteService.getFilePreview(featuredimage)} 
+                    <img
+                        src={appwriteService.getFilePreview(featuredimage)}
                         alt={title}
                         className='w-full h-48 object-cover'
                     />
@@ -35,15 +47,15 @@ function PostCard({$id, title, featuredimage,$createdAt, likes, likedBy}) {
                     </div>
                     <p> <i><span className=' text-white//text-slate-400'> Created At - {$createdAt}</span></i></p>
                 </div>
-                
+
                 <div className='p-4 flex items-center justify-between border-t border-gray-700'>
                     <div className='flex items-center space-x-4'>
-                        <button 
+                        <button
                             className={`flex items-center space-x-1 ${isLiked ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 transition-colors`}
                         >
-                            <Heart 
-                                className="w-5 h-5" 
-                                fill={isLiked ? "currentColor" : "none"} 
+                            <Heart
+                                className="w-5 h-5"
+                                fill={isLiked ? "currentColor" : "none"}
                             />
                             <span className="text-sm">{likes}</span>
                         </button>

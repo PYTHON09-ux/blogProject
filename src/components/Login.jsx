@@ -20,7 +20,7 @@ function Login() {
             if (session) {
                 const userData = await authService.getCurrentUser()
                 if(userData) dispatch(authLogin(userData));
-                console.log(useSelector((state)=> state.auth.userData))
+                // useSelector((state)=> state.auth.userData)
                 navigate("/")
             }
         } catch (error) {
