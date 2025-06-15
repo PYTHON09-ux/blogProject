@@ -14,9 +14,8 @@ export class Service{
         this.bucket = new Storage(this.client);
     }
 
-    async createPost({title, slug, content, featuredImage, status, userId}){
+    async createPost({title, slug, content, featuredImage, status, userId, likes}){
         try {
-            console.log({title, slug, content, featuredImage, status, userId})
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
@@ -27,6 +26,7 @@ export class Service{
                     featuredimage:featuredImage,
                     status,
                     useid:userId,
+                    likes:0,
                 }
             )
         } catch (error) {
@@ -52,6 +52,53 @@ export class Service{
             console.log("Appwrite serive :: updatePost :: error", error);
         }
     }
+
+
+    // Likes update 
+
+    async updateLikes(slug,userId, isLiked, prevUsers){
+        
+        try{
+
+            const data = await this.getPost(slug);
+            const likes= await data.likes
+
+            if(isLiked){
+
+                return await this.databases.updateDocument(
+                    conf.appwriteDatabaseId,
+                    conf.appwriteCollectionId,
+                    slug,
+                    {
+                        likes: likes+1,
+                        likedBy: [...prevUsers,userId]
+                    }
+                )
+            }
+
+            else {
+
+                const data = prevUsers.filter(users=> users !== userId)
+                return await this.databases.updateDocument(
+                    conf.appwriteDatabaseId,
+                    conf.appwriteCollectionId,
+                    slug,
+                    {
+                        likes: likes-1,
+                        likedBy:[...data]
+                    }
+                )
+            }
+
+        }
+
+         catch (error) {
+            console.log("Appwrite serive :: updateLike :: error", error);
+        }
+
+
+    }
+
 
     async deletePost(slug){
         try {

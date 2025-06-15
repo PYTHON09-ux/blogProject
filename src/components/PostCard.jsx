@@ -1,22 +1,24 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import appwriteService from "../appwrite/config"
 import {Link} from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { Heart, MessageCircle, ArrowRight } from 'lucide-react'
 
-function PostCard({$id, title, featuredimage,$createdAt}) {
+
+function PostCard({$id, title, featuredimage,$createdAt, likes, likedBy}) {
     const [isLiked, setIsLiked] = useState(false)
-    const [likes, setLikes] = useState(0)
+    const [isAlreadyLiked, setisAlreadyLiked]= useState();
     const [comments, setComments] = useState(0)
     const authStatus = useSelector((state) => state.auth.status)
+    const userData = useSelector((state) => state.auth.userData);
 
-    const handleLike = (e) => {
-        e.preventDefault()
-        if (authStatus) {
-            setIsLiked(!isLiked)
-            setLikes(prev => isLiked ? prev - 1 : prev + 1)
-        }
-    }
+
+    useEffect(()=>{
+
+                    if(likedBy.includes(userData.$id)){
+                        setIsLiked(true);
+                    }
+    },[])
 
     return (
         <Link to={`/post/${$id}`}>
@@ -37,7 +39,6 @@ function PostCard({$id, title, featuredimage,$createdAt}) {
                 <div className='p-4 flex items-center justify-between border-t border-gray-700'>
                     <div className='flex items-center space-x-4'>
                         <button 
-                            onClick={handleLike}
                             className={`flex items-center space-x-1 ${isLiked ? 'text-red-500' : 'text-gray-400'} hover:text-red-500 transition-colors`}
                         >
                             <Heart 
