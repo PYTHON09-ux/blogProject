@@ -100,6 +100,28 @@ export class Service{
     }
 
 
+    // update comments
+
+        async updateComments(slug,comment){
+        
+        try{
+                    return await this.databases.updateDocument(
+                    conf.appwriteDatabaseId,
+                    conf.appwriteCollectionId,
+                    slug,
+                    {
+                        comments: [...comment]
+                    }
+                )
+            }
+
+         catch (error) {
+            console.log("Appwrite serive :: updateComments :: error", error);
+        }
+
+
+    }
+
     async deletePost(slug){
         try {
             await this.databases.deleteDocument(

@@ -5,36 +5,32 @@ import { Button, Container } from "../components";
 import parse from "html-react-parser";
 import { useSelector } from "react-redux";
 import { Heart, MessageCircle, Edit, Trash2 } from 'lucide-react';
+import Comments from '../components/Comments'
 
 export default function Post() {
+
     const [post, setPost] = useState(null);
-    const [comments, setComments] = useState([]);
-    const [newComment, setNewComment] = useState("");
-    const [isLiked, setIsLiked] = useState(false);
-    const [likes, setLikes] = useState(0);
     const { slug } = useParams();
     const navigate = useNavigate();
+    
+    const [isLiked, setIsLiked] = useState(false);
+    const [likes, setLikes] = useState(0);
     const [isAlreadyLiked, setisAlreadyLiked]= useState();
     
+    const [comments, setComments] = useState([]);
+      
+    console.log(comments)
 
     const userData = useSelector((state) => state.auth.userData);
     const isAuthor = post && userData ? post.useid === userData.$id : false;
     
     useEffect(() => {
-         if (!slug || !userData) return;
+         if (!slug || !userData || !comments ) return;
 
             appwriteService.getPost(slug).then((post) => {
-
                 if (post) {
-
                     setPost(post);
-                    // In a real app, you would fetch comments and likes from your backend
-                    setComments([
-                        { id: 1, text: "Great post!", author: "John Doe", date: "2024-03-20" },
-                        { id: 2, text: "Very informative!", author: "Jane Smith", date: "2024-03-19" },
-                    ]);
-
-                    console.log(userData)
+                    setComments(post.comments)
                     if(post.likedBy.includes(userData.$id)){
                         setIsLiked(true);
                     }
@@ -53,10 +49,6 @@ export default function Post() {
             }
         });
     };
-
-
-
-
 
     const handleLike = async () => {
         if (!userData || !post) return;
@@ -80,22 +72,6 @@ export default function Post() {
             }
         } catch (error) {
             console.error("Failed to update like:", error);
-        }
-    };
-
-
-
-    const handleComment = (e) => {
-        e.preventDefault();
-        if (newComment.trim() && userData) {
-            const comment = {
-                id: Date.now(),
-                text: newComment,
-                author: userData.name || "Anonymous",
-                date: new Date().toISOString().split('T')[0]
-            };
-            setComments([comment, ...comments]);
-            setNewComment("");
         }
     };
 
@@ -154,44 +130,16 @@ export default function Post() {
                     <div className="prose prose-lg max-w-none mb-12 prose-invert">
                         {parse(post.content)}
                     </div>
-
-                    {/* Comments Section */}
-                    <div className="border-t border-gray-700 pt-8">
-                        <h2 className="text-2xl font-bold mb-6">Comments</h2>
-
-                        {/* Comment Form */}
-                        {userData && (
-                            <form onSubmit={handleComment} className="mb-8">
-                                <textarea
-                                    value={newComment}
-                                    onChange={(e) => setNewComment(e.target.value)}
-                                    placeholder="Write a comment..."
-                                    className="w-full p-4 rounded-lg bg-gray-800 border border-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
-                                    rows="3"
-                                ></textarea>
-                                <button
-                                    type="submit"
-                                    className="mt-2 px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
-                                >
-                                    Post Comment
-                                </button>
-                            </form>
-                        )}
-
-                        {/* Comments List */}
-                        <div className="space-y-6">
-                            {comments.map((comment) => (
-                                <div key={comment.id} className="bg-gray-800 rounded-lg p-6">
-                                    <div className="flex items-center justify-between mb-2">
-                                        <div className="font-medium text-white">{comment.author}</div>
-                                        <div className="text-sm text-gray-400">{comment.date}</div>
-                                    </div>
-                                    <p className="text-gray-300">{comment.text}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
                 </div>
+
+                <Comments slug={slug} 
+                        comments={comments} 
+                        setComments={setComments} 
+                        isAuthor={isAuthor} 
+                        userData={userData}
+                        />
+
+                {/* {console.log(userData)} */}
             </Container>
         </div>
     ) : (
